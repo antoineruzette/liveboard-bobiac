@@ -1,6 +1,7 @@
 # backend/app.py
 
-from fastapi import FastAPI, Request, StaticFiles
+from fastapi import FastAPI, Request
+from starlette.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import pandas as pd
