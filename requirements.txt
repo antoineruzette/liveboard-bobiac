@@ -2,3 +2,11 @@ fastapi
 uvicorn
 pandas
 python-multipart
+pydantic
+starlette
+typing-extensions
+python-dotenv
+requests
+httpx
+jinja2
+aiofiles
