@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel
 import pandas as pd
 from datetime import datetime
@@ -38,6 +38,11 @@ async def update(sub: Submission):
     sub_entry.update(sub.results)
     submissions.append(sub_entry)
     return {"status": "ok"}
+
+@app.post("/reset")
+async def reset():
+    submissions.clear()
+    return RedirectResponse(url="/", status_code=303)
 
 @app.get("/", response_class=HTMLResponse)
 async def show_leaderboard():
@@ -77,6 +82,14 @@ async def show_leaderboard():
                 <img src="/static/bobiac_logos_svgexport-03.svg" alt="BoBIAC Logo" class="w-64 mb-4">
                 <h1 class="text-4xl font-bold text-center text-gray-800">Segmentation Leaderboard</h1>
                 <p class="text-center text-gray-600 mt-4">Last updated: {}</p>
+                <form action="/reset" method="post" class="mt-4" onsubmit="return confirm('Are you sure you want to reset the leaderboard? This will delete all submissions.');">
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                        </svg>
+                        Reset Leaderboard
+                    </button>
+                </form>
             </div>
     """
 
