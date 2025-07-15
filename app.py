@@ -51,11 +51,11 @@ async def show_leaderboard():
         <title>Live Segmentation Leaderboard</title>
         <meta http-equiv="refresh" content="15">
         <style>
-            body { font-family: Arial, sans-serif; margin: 40px; }
-            h1 { color: #333; }
-            table { border-collapse: collapse; width: 100%; }
-            th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-            th { background-color: #f2f2f2; }
+            body {{ font-family: Arial, sans-serif; margin: 40px; }}
+            h1 {{ color: #333; }}
+            table {{ border-collapse: collapse; width: 100%; }}
+            th, td {{ border: 1px solid #ccc; padding: 8px; text-align: center; }}
+            th {{ background-color: #f2f2f2; }}
         </style>
     </head>
     <body>
