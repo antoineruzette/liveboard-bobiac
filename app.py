@@ -1,6 +1,6 @@
 # backend/app.py
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import pandas as pd
@@ -8,6 +8,9 @@ from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Mount the current directory as static files to serve the logo
+app.mount("/static", StaticFiles(directory="."), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,12 +44,13 @@ async def show_leaderboard():
         return """
         <html>
         <head>
-            <title>Live Segmentation Leaderboard</title>
+            <title>Segmentation Leaderboard</title>
             <meta http-equiv="refresh" content="15">
             <script src="https://cdn.tailwindcss.com"></script>
         </head>
         <body class="bg-gray-50">
-            <div class="min-h-screen flex items-center justify-center">
+            <div class="min-h-screen flex flex-col items-center justify-center">
+                <img src="/static/bobiac_logos_svgexport-03.svg" alt="BoBIAC Logo" class="w-64 mb-8">
                 <h2 class="text-3xl font-bold text-gray-800">No submissions yet!</h2>
             </div>
         </body>
@@ -58,20 +62,21 @@ async def show_leaderboard():
     
     # Get top 3 for podium
     podium = df.head(3) if len(df) >= 3 else df
-    # Rest of the leaderboard
-    rest_of_board = df.iloc[3:] if len(df) > 3 else pd.DataFrame()
 
     html = """
     <html>
     <head>
-        <title>Live Segmentation Leaderboard</title>
+        <title>Segmentation Leaderboard</title>
         <meta http-equiv="refresh" content="15">
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
     <body class="bg-gray-50 min-h-screen p-8">
         <div class="max-w-7xl mx-auto">
-            <h1 class="text-4xl font-bold text-center text-gray-800 mb-2">🧠 Live Segmentation Leaderboard</h1>
-            <p class="text-center text-gray-600 mb-12">Last updated: {}</p>
+            <div class="flex flex-col items-center mb-12">
+                <img src="/static/bobiac_logos_svgexport-03.svg" alt="BoBIAC Logo" class="w-64 mb-4">
+                <h1 class="text-4xl font-bold text-center text-gray-800">Live Leaderboard</h1>
+                <p class="text-center text-gray-600 mt-4">Last updated: {}</p>
+            </div>
     """
 
     # Add podium section if we have submissions
@@ -119,48 +124,59 @@ async def show_leaderboard():
             </div>
         """
 
-    # Add full leaderboard table
-    if not rest_of_board.empty:
-        html += """
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    # Add complete submissions table with all entries
+    html += """
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 p-6 border-b border-gray-200">Complete Submission Log</h2>
+            <div class="overflow-x-auto">
                 <table class="min-w-full">
                     <thead>
                         <tr class="bg-gray-800 text-white">
+    """
+    
+    # Add headers
+    for col in df.columns:
+        html += f"""
+                            <th class="px-6 py-4 text-left">{col}</th>
         """
         
-        # Add headers
-        for col in rest_of_board.columns:
-            html += f"""
-                            <th class="px-6 py-4 text-left">{col}</th>
-            """
-            
-        html += """
+    html += """
                         </tr>
                     </thead>
                     <tbody>
+    """
+    
+    # Add all rows
+    for idx, row in df.iterrows():
+        # Highlight top 3 with different background colors
+        bg_color = ""
+        if idx == 0:
+            bg_color = "bg-yellow-50"
+        elif idx == 1:
+            bg_color = "bg-gray-50"
+        elif idx == 2:
+            bg_color = "bg-orange-50"
+            
+        html += f"""
+                        <tr class="border-b border-gray-200 hover:bg-gray-50 {bg_color}">
+        """
+        for col in df.columns:
+            value = row[col]
+            if col == "Instance F1 Score":
+                value = f"{value:.3f}"
+            html += f"""
+                            <td class="px-6 py-4">{value}</td>
+            """
+        html += """
+                        </tr>
         """
         
-        # Add rows
-        for idx, row in rest_of_board.iterrows():
-            html += """
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-            """
-            for col in rest_of_board.columns:
-                value = row[col]
-                if col == "Instance F1 Score":
-                    value = f"{value:.3f}"
-                html += f"""
-                            <td class="px-6 py-4">{value}</td>
-                """
-            html += """
-                        </tr>
-            """
-            
-        html += """
+    html += """
                     </tbody>
                 </table>
             </div>
-        """
+        </div>
+    """
 
     html += """
         </div>
