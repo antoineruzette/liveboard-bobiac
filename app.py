@@ -74,7 +74,7 @@ async def show_leaderboard():
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col items-center mb-12">
                 <img src="/static/bobiac_logos_svgexport-03.svg" alt="BoBIAC Logo" class="w-64 mb-4">
-                <h1 class="text-4xl font-bold text-center text-gray-800">Live Leaderboard</h1>
+                <h1 class="text-4xl font-bold text-center text-gray-800">Segmentation Leaderboard</h1>
                 <p class="text-center text-gray-600 mt-4">Last updated: {}</p>
             </div>
     """
