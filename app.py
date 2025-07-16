@@ -63,11 +63,16 @@ async def show_leaderboard():
         </html>
         """
 
+    # Create DataFrame and get best score for each team
     df = pd.DataFrame(submissions)
     df = df.sort_values("Mean AP", ascending=False)
     
-    # Get top 3 for podium
-    podium = df.head(3) if len(df) >= 3 else df
+    # Get best score for each team
+    best_per_team = df.loc[df.groupby('Name')['Mean AP'].idxmax()]
+    best_per_team = best_per_team.sort_values("Mean AP", ascending=False)
+    
+    # Get top 3 unique teams for podium
+    podium = best_per_team.head(3) if len(best_per_team) >= 3 else best_per_team
 
     html = """
     <html>
@@ -130,7 +135,7 @@ async def show_leaderboard():
             </div>
         """
 
-    # Add complete submissions table with all entries
+    # Add complete submissions table with all entries (showing all attempts)
     html += """
         <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
             <h2 class="text-2xl font-bold text-gray-800 p-6 border-b border-gray-200">Complete Submission Log</h2>
@@ -154,13 +159,13 @@ async def show_leaderboard():
     
     # Add all rows
     for idx, row in df.iterrows():
-        # Highlight top 3 with different background colors
+        # Highlight best submission for each team that made it to the podium
         bg_color = ""
-        if idx == 0:
+        if row['Name'] == podium.iloc[0]['Name'] and row['Mean AP'] == podium.iloc[0]['Mean AP']:
             bg_color = "bg-yellow-50"
-        elif idx == 1:
+        elif len(podium) > 1 and row['Name'] == podium.iloc[1]['Name'] and row['Mean AP'] == podium.iloc[1]['Mean AP']:
             bg_color = "bg-gray-50"
-        elif idx == 2:
+        elif len(podium) > 2 and row['Name'] == podium.iloc[2]['Name'] and row['Mean AP'] == podium.iloc[2]['Mean AP']:
             bg_color = "bg-orange-50"
             
         html += f"""
