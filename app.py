@@ -64,7 +64,7 @@ async def show_leaderboard():
         """
 
     df = pd.DataFrame(submissions)
-    df = df.sort_values("Instance F1 Score", ascending=False)
+    df = df.sort_values("Mean AP", ascending=False)
     
     # Get top 3 for podium
     podium = df.head(3) if len(df) >= 3 else df
@@ -82,14 +82,6 @@ async def show_leaderboard():
                 <img src="/static/bobiac_logos_svgexport-03.svg" alt="BoBIAC Logo" class="w-64 mb-4">
                 <h1 class="text-4xl font-bold text-center text-gray-800">Segmentation Leaderboard</h1>
                 <p class="text-center text-gray-600 mt-4">Last updated: {}</p>
-                <form action="/reset" method="post" class="mt-4" onsubmit="return confirm('Are you sure you want to reset the leaderboard? This will delete all submissions.');">
-                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                        </svg>
-                        Reset Leaderboard
-                    </button>
-                </form>
             </div>
     """
 
@@ -106,7 +98,7 @@ async def show_leaderboard():
                     <div class="bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-lg w-full h-[250px] flex flex-col items-center justify-center p-4 transform hover:scale-105 transition-transform duration-200">
                         <div class="text-6xl mb-4">🥈</div>
                         <div class="text-xl font-bold text-gray-800 text-center mb-2">{podium.iloc[1]['Name']}</div>
-                        <div class="text-gray-700">F1: {podium.iloc[1]['Instance F1 Score']:.3f}</div>
+                        <div class="text-gray-700">Mean AP: {podium.iloc[1]['Mean AP']:.3f}</div>
                     </div>
                 </div>
             """
@@ -117,7 +109,7 @@ async def show_leaderboard():
                     <div class="bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-t-lg w-full h-[300px] flex flex-col items-center justify-center p-4 transform hover:scale-105 transition-transform duration-200 shadow-lg">
                         <div class="text-7xl mb-4">🥇</div>
                         <div class="text-2xl font-bold text-gray-800 text-center mb-2">{podium.iloc[0]['Name']}</div>
-                        <div class="text-gray-700 text-lg">F1: {podium.iloc[0]['Instance F1 Score']:.3f}</div>
+                        <div class="text-gray-700 text-lg">Mean AP: {podium.iloc[0]['Mean AP']:.3f}</div>
                     </div>
                 </div>
         """
@@ -129,7 +121,7 @@ async def show_leaderboard():
                     <div class="bg-gradient-to-br from-orange-100 to-orange-200 rounded-t-lg w-full h-[200px] flex flex-col items-center justify-center p-4 transform hover:scale-105 transition-transform duration-200">
                         <div class="text-5xl mb-4">🥉</div>
                         <div class="text-lg font-bold text-gray-800 text-center mb-2">{podium.iloc[2]['Name']}</div>
-                        <div class="text-gray-700">F1: {podium.iloc[2]['Instance F1 Score']:.3f}</div>
+                        <div class="text-gray-700">Mean AP: {podium.iloc[2]['Mean AP']:.3f}</div>
                     </div>
                 </div>
             """
@@ -176,7 +168,7 @@ async def show_leaderboard():
         """
         for col in df.columns:
             value = row[col]
-            if col == "Instance F1 Score":
+            if col == "Mean AP":
                 value = f"{value:.3f}"
             html += f"""
                             <td class="px-6 py-4">{value}</td>
@@ -189,6 +181,16 @@ async def show_leaderboard():
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="flex justify-center mt-8 mb-8">
+            <form action="/reset" method="post" onsubmit="return confirm('Are you sure you want to reset the leaderboard? This will delete all submissions.');">
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                    </svg>
+                    Reset Leaderboard
+                </button>
+            </form>
         </div>
     """
 
