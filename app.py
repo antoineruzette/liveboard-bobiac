@@ -80,18 +80,18 @@ async def show_leaderboard():
         <meta http-equiv="refresh" content="15">
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            .podium-container {
+            .podium-container {{
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 2rem;
                 padding: 2rem;
-            }
-            .podium-wrapper {
+            }}
+            .podium-wrapper {{
                 flex: 1;
                 min-width: 300px;
                 max-width: 600px;
-            }
+            }}
         </style>
     </head>
     <body class="bg-gray-50 min-h-screen p-8">
@@ -99,7 +99,7 @@ async def show_leaderboard():
             <div class="flex flex-col items-center mb-12">
                 <img src="/static/bobiac_logos_svgexport-03.svg" alt="BoBIAC Logo" class="w-64 mb-4">
                 <h1 class="text-4xl font-bold text-center text-gray-800">BoBIAC Leaderboard</h1>
-                <p class="text-center text-gray-600 mt-4">Last updated: {}</p>
+                <p class="text-center text-gray-600 mt-4">Last updated: {timestamp}</p>
             </div>
     """
 
@@ -258,4 +258,4 @@ async def show_leaderboard():
     </html>
     """
 
-    return HTMLResponse(content=html.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+    return HTMLResponse(content=html.format(timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
