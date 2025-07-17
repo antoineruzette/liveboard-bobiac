@@ -128,7 +128,7 @@ async def show_leaderboard():
         html += f"""
             <div class="podium-wrapper bg-white rounded-lg shadow-lg p-6 mb-8">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">{task}</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">Task: {task}</h2>
                     <form action="/reset/{task}" method="post" class="inline" onsubmit="return confirm('Are you sure you want to reset the {task} leaderboard?');">
                         <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
                             Reset {task}
