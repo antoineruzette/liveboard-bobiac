@@ -60,7 +60,7 @@ async def show_leaderboard():
         return """
         <html>
         <head>
-            <title>BoBIAC Leaderboard</title>
+            <title>Segmentation Leaderboard</title>
             <meta http-equiv="refresh" content="15">
             <script src="https://cdn.tailwindcss.com"></script>
         </head>
